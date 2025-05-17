@@ -4,3 +4,8 @@ Two console applications:
 - ```i8008-compiler``` translating mnemonics to a binary code
 
 - There is no some common makefile yet 
+
+### Directory libs
+- ```libs``` includes source codes of dinamic linked libraries which are used by the emulator and the compiler 
+### Directory source 
+- ```source``` includes source codes of the compiler and the emulator 
