@@ -37,6 +37,19 @@ typedef struct Flags_s
     uint8_t CF : 1;
 } Flags_s;
 
+typedef struct opcode_s
+{
+    uint8_t reg2 : 3;
+    uint8_t reg1 : 3;
+    uint8_t id : 2;
+} opcode_s;
+
+typedef union opcode_u
+{
+    opcode_s labels;
+    uint8_t value;
+} opcode_u;
+
 typedef struct i8008_MODEL_s // Intel-8008 processor
 {
     Flags_s FLAGS; // 0 - parity flip-flop, 1 - zero flip-flop, 2 - sign flip-flop, 3 - carry flip-flop

@@ -32,6 +32,7 @@ typedef struct instr_s
     uint8_t second_byte;
     uint8_t third_byte;
     uint8_t length;
+    uint8_t group;
 } instr_s;
 
 #endif // TRANSLATOR_H_INCLUDED
