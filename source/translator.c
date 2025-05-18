@@ -48,14 +48,16 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
     switch (PolinHash(mnemonic))
     {
         case MOV_HASH:
+            dest->group = 0b000;
             dest->opcode.labels.id = 0b11;
             mnemonic = strtok(NULL, " ");
             dest->opcode.labels.reg1 = GetRegIdx(mnemonic[0]);
             mnemonic = strtok(NULL, " ");
             dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
-            dest->length = 1;
+            dest->length = 0b01;
             return 0;
         case MVI_HASH:
+            dest->group = 0b000;
             uint8_t imm;
             dest->opcode.labels.id = 0;
             mnemonic = strtok(NULL, " ");
@@ -64,7 +66,7 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
             mnemonic = strtok(NULL, " ");
             sscanf(mnemonic, "%" SCNu8, &imm);
             dest->second_byte = imm;
-            dest->length = 2;
+            dest->length = 0b10;
             return 0;
         case INC_HASH:
             mnemonic = strtok(NULL, " ");
@@ -74,10 +76,11 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
                 printf("ERROR! DEC and INC instructions do not work with accumulator (A)!\n");
                 return 1;
             }
+            dest->group = 0b000;
             dest->opcode.labels.id = 0b00;
             dest->opcode.labels.reg1 = GetRegIdx(mnemonic[0]);
             dest->opcode.labels.reg2 = 0b000;
-            dest->length = 1;
+            dest->length = 0b01;
             return 0;
         case DEC_HASH:
             mnemonic = strtok(NULL, " ");
@@ -87,10 +90,11 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
                 printf("ERROR! DEC and INC instructions do not work with accumulator (A)!\n");
                 return 1;
             }
+            dest->group = 0b000;
             dest->opcode.labels.id = 0b00;
             dest->opcode.labels.reg1 = GetRegIdx(mnemonic[0]);
             dest->opcode.labels.reg2 = 0b001;
-            dest->length = 1;
+            dest->length = 0b01;
             return 0;
         default:
             fclose(src);
@@ -101,18 +105,22 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
 
 void WriteInMemImg(machine_code_s* mem, instr_s* src)
 {
-    if (mem->act_size + src->length > mem->buff_size)
+    if (mem->act_size + src->length + 1 > mem->buff_size)
     {
         mem->buff_size *= 2;
         mem->img = (uint8_t*) realloc (mem->img, sizeof(uint8_t) * mem->buff_size);
     }
     switch (src->length)
     {
-        case 1:
+        case 0b01:
+            mem->img[mem->act_size] = src->group;
+            mem->act_size += 1;
             mem->img[mem->act_size] = src->opcode.value;
             mem->act_size += 1;
             return;
-        case 2:
+        case 0b10:
+            mem->img[mem->act_size] = src->group;
+            mem->act_size += 1;
             mem->img[mem->act_size] = src->opcode.value;
             mem->act_size += 1;
             mem->img[mem->act_size] = src->second_byte;
@@ -160,13 +168,12 @@ int main()
         WriteInMemImg(&MACHINE_CODE, &input_instr);
     }
 
-    printf("Number of bytes: %d\n", MACHINE_CODE.act_size);
-
-    FILE* bin_code = fopen("../IO/i8008_exec.bin", "wb");
+    FILE* bin_code = fopen("../IO/code.bin", "wb");
+    fwrite(&MACHINE_CODE.act_size, sizeof(int), 1, bin_code);
     fwrite(MACHINE_CODE.img, sizeof(uint8_t), MACHINE_CODE.act_size, bin_code);
     fclose(bin_code);
-
     fclose(program);
     DEST_EXEC_MEMORY;
+    printf("COMPILING REPORT\nNumber of bytes: %d\nProgram size (bytes): %d\nAdditional bytes for emulator working: %d\n", MACHINE_CODE.act_size + sizeof(int), MACHINE_CODE.act_size - line, line + sizeof(int));
     return 0;
 }
