@@ -51,11 +51,26 @@ void DecIndRegInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
     }
 }
 
+void Reset(i8008_MODEL_s* i8008)
+{
+    i8008->ADDR_STACK.PC = 0;
+    i8008->ADDR_STACK.SP = 0;
+    i8008->FLAGS.CF = 0;
+    i8008->FLAGS.PF = 0;
+    i8008->FLAGS.SF = 0;
+    i8008->FLAGS.ZF = 0;
+    for (int i = 0;  i < 7; i++)
+    {
+        i8008->REG_FILE.REGS[i] = 0;
+        i8008->ADDR_STACK.stack[i] = 0;
+    }
+}
+
 int main()
 {
     //Initializing...
     i8008_MODEL_s I8008M;
-    I8008M.ADDR_STACK.PC = 0;
+    Reset(&I8008M);
     uint8_t* RAM = (uint8_t*) malloc (sizeof(uint8_t) * ADDR_AREA_SIZE); // external memory for processor
     DecInstr dec_func_array[4] = {DecIndRegInstr};
     DecInstr DecFunc;
@@ -71,14 +86,15 @@ int main()
     int prog_size;
     fread(&prog_size, sizeof(int), 1, program);
     fread(RAM, sizeof(uint8_t), prog_size, program);
-    printf("PROG SIZE: %d\nThe emulator has started performing...\n", prog_size);
+    printf("The emulator has started performing...\n");
     for (int inst_num = 1; I8008M.ADDR_STACK.PC < prog_size; inst_num++)
     {
         DecFunc = Fetch(dec_func_array, &I8008M, RAM, &opc);
         DecFunc(&I8008M, RAM, &opc);
     }
 
-    printf("The program was performing successfully\n");
+    fclose(program);
+        printf("The program was performing successfully\n");
     printf("##REGISTERS VALUES##\n");
     printf("A - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.A);
     printf("B - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.B);
@@ -87,8 +103,12 @@ int main()
     printf("E - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.E);
     printf("H - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.H);
     printf("L - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.L);
-
-    fclose(program);
+    printf("##FLAGS##\n");
+    printf("ZF - %" PRIu8 "\n", I8008M.FLAGS.ZF);
+    printf("CF - %" PRIu8 "\n", I8008M.FLAGS.CF);
+    printf("PF - %" PRIu8 "\n", I8008M.FLAGS.PF);
+    printf("SF - %" PRIu8 "\n", I8008M.FLAGS.SF);
+    printf("########\n");
     free(RAM);
     printf("The RAM has been disabled successfully");
     return 0;
