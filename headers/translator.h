@@ -35,4 +35,12 @@ typedef struct instr_s
     uint8_t group;
 } instr_s;
 
+void InitExecMemory(machine_code_s* MACHINE_CODE);
+
+uint8_t GetRegIdx(char reg);
+
+int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src);
+
+void WriteInMemImg(machine_code_s* mem, instr_s* src);
+
 #endif // TRANSLATOR_H_INCLUDED
