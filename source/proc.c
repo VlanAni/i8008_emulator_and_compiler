@@ -75,11 +75,11 @@ int main()
     DecInstr dec_func_array[4] = {DecIndRegInstr};
     DecInstr DecFunc;
     opcode_u opc;
-    printf("The RAM has been enabled successfully\n");
+    printf("\nThe RAM has been enabled successfully\n");
     FILE* program = fopen("../IO/code.bin", "rb");
     if (program == NULL)
     {
-        printf("ERROR! Cannot open the file with binary code");
+        printf("ERROR! Cannot open the file with binary code\n");
         return 0;
     }
 
@@ -94,15 +94,15 @@ int main()
     }
 
     fclose(program);
-        printf("The program was performing successfully\n");
+    printf("The program has been performed successfully\n");
     printf("##REGISTERS VALUES##\n");
-    printf("A - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.A);
-    printf("B - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.B);
-    printf("C - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.C);
-    printf("D - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.D);
-    printf("E - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.E);
-    printf("H - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.H);
-    printf("L - %" PRIu8 "\n", I8008M.REG_FILE.named_regs.L);
+    printf("A unsig = %" PRIu8 "\tsig = %" PRIi8 "\n", I8008M.REG_FILE.named_regs.A, (int8_t) I8008M.REG_FILE.named_regs.A);
+    printf("B unsig = %" PRIu8 "\tsig = %" PRIi8 "\n", I8008M.REG_FILE.named_regs.B, (int8_t) I8008M.REG_FILE.named_regs.B);
+    printf("C unsig = %" PRIu8 "\tsig = %" PRIi8 "\n", I8008M.REG_FILE.named_regs.C, (int8_t) I8008M.REG_FILE.named_regs.C);
+    printf("D unsig = %" PRIu8 "\tsig = %" PRIi8 "\n", I8008M.REG_FILE.named_regs.D, (int8_t) I8008M.REG_FILE.named_regs.D);
+    printf("E unsig = %" PRIu8 "\tsig = %" PRIi8 "\n", I8008M.REG_FILE.named_regs.E, (int8_t) I8008M.REG_FILE.named_regs.E);
+    printf("H unsig = %" PRIu8 "\tsig = %" PRIi8 "\n", I8008M.REG_FILE.named_regs.H, (int8_t) I8008M.REG_FILE.named_regs.H);
+    printf("L unsig = %" PRIu8 "\tsig = %" PRIi8 "\n", I8008M.REG_FILE.named_regs.L, (int8_t) I8008M.REG_FILE.named_regs.L);
     printf("##FLAGS##\n");
     printf("ZF - %" PRIu8 "\n", I8008M.FLAGS.ZF);
     printf("CF - %" PRIu8 "\n", I8008M.FLAGS.CF);
@@ -110,7 +110,7 @@ int main()
     printf("SF - %" PRIu8 "\n", I8008M.FLAGS.SF);
     printf("########\n");
     free(RAM);
-    printf("The RAM has been disabled successfully");
+    printf("The RAM has been disabled successfully\n");
     return 0;
 }
 

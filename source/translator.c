@@ -1,9 +1,9 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <commands_hashes.h>
 #include <translator.h>
-#include <stdio.h>
 
 void InitExecMemory(machine_code_s* MACHINE_CODE)
 {
@@ -34,11 +34,11 @@ uint32_t PolinHash(char* st)
     uint32_t p = 1, summ = 0, s;
     for (int i = 0; i < 3; i++)
     {
-        s = (uint32_t) ((uint8_t) st[i]);
+        s = (uint32_t) ((uint8_t) st[i] - 'A' + (uint8_t) p);
         summ += s * p;
-        p *= 6;
+        p *= P;
     }
-    return summ % 1000000;
+    return summ % REM;
 }
 
 int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
@@ -95,6 +95,96 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
             dest->opcode.labels.reg1 = GetRegIdx(mnemonic[0]);
             dest->opcode.labels.reg2 = 0b001;
             dest->length = 0b01;
+            return 0;
+        case ADD_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b000;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case ADI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b000;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
+            return 0;
+        case SUB_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b010;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case SUI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b010;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
+            return 0;
+        case ANA_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b100;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case ANI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b100;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
+            return 0;
+        case XRA_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b101;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case XRI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b101;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
+            return 0;
+        case ORA_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b110;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case ORI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b110;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
             return 0;
         default:
             fclose(src);
@@ -174,6 +264,6 @@ int main()
     fclose(bin_code);
     fclose(program);
     DEST_EXEC_MEMORY;
-    printf("COMPILING REPORT\nNumber of bytes: %d\nProgram size (bytes): %d\nAdditional bytes for emulator working: %d\n", MACHINE_CODE.act_size + sizeof(int), MACHINE_CODE.act_size - line, line + sizeof(int));
+    printf("\nCOMPILING REPORT\nNumber of bytes: %d\nProgram size (bytes): %d\nAdditional bytes for emulator working: %d\n", MACHINE_CODE.act_size + sizeof(int), MACHINE_CODE.act_size - line, line + sizeof(int));
     return 0;
 }
