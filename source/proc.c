@@ -3,6 +3,7 @@
 #include <inttypes.h>
 #include <proc_abstr.h>
 #include <index_reg_instr.h>
+#include <acc_group_instr.h>
 
 typedef void (*DecInstr) (i8008_MODEL_s*, uint8_t*, opcode_u*);
 
@@ -51,6 +52,75 @@ void DecIndRegInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
     }
 }
 
+void DecAccGroupInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
+{
+    uint8_t idx = opc->labels.id;
+    uint8_t src = opc->labels.reg2;
+    uint8_t dst = opc->labels.reg1;
+    if (!idx)
+    {
+        if (src == 0b100)
+        {
+            uint8_t imm = RAM[i8008->ADDR_STACK.PC];
+            i8008->ADDR_STACK.PC += 1;
+            switch (dst)
+            {
+                case 0b000:
+                ADI(i8008, imm);
+                break;
+            case 0b010:
+                SUI(i8008, imm);
+                break;
+            case 0b100:
+                ANI(i8008, imm);
+                break;
+            case 0b101:
+                XRI(i8008, imm);
+                break;
+            case 0b110:
+                ORI(i8008, imm);
+                break;
+            }
+        }
+    }
+    else
+    {
+        switch (dst)
+        {
+            case 0b000:
+                if (src == 0b111)
+                    ADD_M(i8008, RAM);
+                else
+                    ADD_Rs(i8008, src);
+                break;
+            case 0b010:
+                if (src == 0b111)
+                    SUB_M(i8008, RAM);
+                else
+                    SUB_Rs(i8008, src);
+                break;
+            case 0b100:
+                if (src == 0b111)
+                    ANA_M(i8008, RAM);
+                else
+                    ANA_Rs(i8008, src);
+                break;
+            case 0b101:
+                if (src == 0b111)
+                    XRA_M(i8008, RAM);
+                else
+                    XRA_Rs(i8008, src);
+                break;
+            case 0b110:
+                if (src == 0b111)
+                    ORA_M(i8008, RAM);
+                else
+                    ORA_Rs(i8008, src);
+                break;
+        }
+    }
+}
+
 void Reset(i8008_MODEL_s* i8008)
 {
     i8008->ADDR_STACK.PC = 0;
@@ -72,7 +142,7 @@ int main()
     i8008_MODEL_s I8008M;
     Reset(&I8008M);
     uint8_t* RAM = (uint8_t*) malloc (sizeof(uint8_t) * ADDR_AREA_SIZE); // external memory for processor
-    DecInstr dec_func_array[4] = {DecIndRegInstr};
+    DecInstr dec_func_array[4] = {DecIndRegInstr, DecAccGroupInstr}; // decoding instructions
     DecInstr DecFunc;
     opcode_u opc;
     printf("\nThe RAM has been enabled successfully\n");
