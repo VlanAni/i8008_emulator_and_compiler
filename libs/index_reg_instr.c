@@ -1,7 +1,6 @@
 #include <inttypes.h>
 #include <proc_abstr.h>
 #include <index_reg_instr.h>
-#include <stdio.h>
 
 
 #define GET_MEM_ADDR \
@@ -16,7 +15,7 @@ uint16_t L = I8008M->REG_FILE.named_regs.L;
 #define SET_VALUE I8008M->REG_FILE.REGS[dst] = val;
 
 #define SET_FLIP_FLOPS \
-I8008M->FLAGS.PF = I8008M->REG_FILE.REGS[dst] & 0b00000001;\
+I8008M->FLAGS.PF = ~(I8008M->REG_FILE.REGS[dst] | 0b11111110);\
 I8008M->FLAGS.ZF = I8008M->REG_FILE.REGS[dst] == 0;\
 I8008M->FLAGS.SF = I8008M->REG_FILE.REGS[dst] >> 7;
 
