@@ -34,7 +34,7 @@ uint32_t PolinHash(char* st)
     uint32_t p = 1, summ = 0, s;
     for (int i = 0; i < 3; i++)
     {
-        s = (uint32_t) ((uint8_t) st[i] - 'A' + (uint8_t) p);
+        s = (uint32_t) ((uint8_t) st[i] - 'A');
         summ += s * p;
         p *= P;
     }
@@ -114,6 +114,24 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
             dest->second_byte = imm;
             dest->length = 0b10;
             return 0;
+        case ADC_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b001;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case ACI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b001;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
+            return 0;
         case SUB_HASH:
             mnemonic = strtok(NULL, " ");
             dest->group = 0b001;
@@ -126,6 +144,24 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
             dest->group = 0b001;
             dest->opcode.labels.id = 0b00;
             dest->opcode.labels.reg1 = 0b010;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
+            return 0;
+        case SBB_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b011;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case SCI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b011;
             dest->opcode.labels.reg2 = 0b100;
             mnemonic = strtok(NULL, " ");
             sscanf(mnemonic, "%" SCNu8, &imm);
@@ -185,6 +221,44 @@ int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src)
             sscanf(mnemonic, "%" SCNu8, &imm);
             dest->second_byte = imm;
             dest->length = 0b10;
+            return 0;
+        case CMP_HASH:
+            mnemonic = strtok(NULL, " ");
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b10;
+            dest->opcode.labels.reg1 = 0b111;
+            dest->opcode.labels.reg2 = GetRegIdx(mnemonic[0]);
+            dest->length = 0b01;
+            return 0;
+        case CPI_HASH:
+            dest->group = 0b001;
+            dest->opcode.labels.id = 0b00;
+            dest->opcode.labels.reg1 = 0b111;
+            dest->opcode.labels.reg2 = 0b100;
+            mnemonic = strtok(NULL, " ");
+            sscanf(mnemonic, "%" SCNu8, &imm);
+            dest->second_byte = imm;
+            dest->length = 0b10;
+            return 0;
+        case RLC_HASH:
+            dest->group = 0b001;
+            dest->opcode.value = 0b00000010;
+            dest->length = 0b01;
+            return 0;
+        case RRC_HASH:
+            dest->group = 0b001;
+            dest->opcode.value = 0b00001010;
+            dest->length = 0b01;
+            return 0;
+        case RAL_HASH:
+            dest->group = 0b001;
+            dest->opcode.value = 0b00010010;
+            dest->length = 0b01;
+            return 0;
+        case RAR_HASH:
+            dest->group = 0b001;
+            dest->opcode.value = 0b00011010;
+            dest->length = 0b01;
             return 0;
         default:
             fclose(src);

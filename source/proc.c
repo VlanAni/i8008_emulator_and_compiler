@@ -7,6 +7,8 @@
 
 typedef void (*DecInstr) (i8008_MODEL_s*, uint8_t*, opcode_u*);
 
+typedef void (*RotInstr) (i8008_MODEL_s*);
+
 DecInstr Fetch(DecInstr* dec_func_arr, i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
 {
     uint8_t instruction_group = RAM[i8008->ADDR_STACK.PC];
@@ -82,6 +84,12 @@ void DecAccGroupInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
                 break;
             }
         }
+        else
+        {
+            RotInstr rot_instrs[4] = {RLC, RRC, RAL, RAR};
+            RotInstr currInstr = rot_instrs[dst];
+            currInstr (i8008);
+        }
     }
     else
     {
@@ -93,11 +101,23 @@ void DecAccGroupInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
                 else
                     ADD_Rs(i8008, src);
                 break;
+            case 0b001:
+                if (src == 0b111)
+                    ADC_M(i8008, RAM);
+                else
+                    ADC_Rs(i8008, src);
+                break;
             case 0b010:
                 if (src == 0b111)
                     SUB_M(i8008, RAM);
                 else
                     SUB_Rs(i8008, src);
+                break;
+            case 0b011:
+                if (src == 0b111)
+                    SBB_M(i8008, RAM);
+                else
+                    SBB_Rs(i8008, src);
                 break;
             case 0b100:
                 if (src == 0b111)
@@ -116,6 +136,12 @@ void DecAccGroupInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
                     ORA_M(i8008, RAM);
                 else
                     ORA_Rs(i8008, src);
+                break;
+            case 0b111:
+                if (src == 0b111)
+                    CMP_M(i8008, RAM);
+                else
+                    CMP_Rs(i8008, src);
                 break;
         }
     }
