@@ -67,7 +67,7 @@ void DecAccGroupInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
             i8008->ADDR_STACK.PC += 1;
             switch (dst)
             {
-                case 0b000:
+            case 0b000:
                 ADI(i8008, imm);
                 break;
             case 0b010:
@@ -81,6 +81,9 @@ void DecAccGroupInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
                 break;
             case 0b110:
                 ORI(i8008, imm);
+                break;
+            case 0b111:
+                CPI(i8008, imm);
                 break;
             }
         }
@@ -150,7 +153,7 @@ void DecAccGroupInstr (i8008_MODEL_s* i8008, uint8_t* RAM, opcode_u* opc)
 void Reset(i8008_MODEL_s* i8008)
 {
     i8008->ADDR_STACK.PC = 0;
-    i8008->ADDR_STACK.SP = 0;
+    i8008->ADDR_STACK.SP = STACK_TOP;
     i8008->FLAGS.CF = 0;
     i8008->FLAGS.PF = 0;
     i8008->FLAGS.SF = 0;
