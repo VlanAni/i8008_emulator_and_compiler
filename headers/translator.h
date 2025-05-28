@@ -39,7 +39,7 @@ void InitExecMemory(machine_code_s* MACHINE_CODE);
 
 uint8_t GetRegIdx(char reg);
 
-int InstrEncoder(instr_s* dest, char* instr_buff, FILE* src);
+int InstrEncoder(instr_s* dest, char* instr_buff, stack_s* stack, int act_size, FILE* src);
 
 void WriteInMemImg(machine_code_s* mem, instr_s* src);
 

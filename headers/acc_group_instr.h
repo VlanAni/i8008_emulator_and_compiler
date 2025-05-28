@@ -13,11 +13,33 @@ void ADD_M(i8008_MODEL_s* i8008, uint8_t* RAM);
 
 void ADI(i8008_MODEL_s* i8008, uint8_t imm);
 
+
+
+
+void ADC_Rs(i8008_MODEL_s* i8008, uint8_t src);
+
+void ADC_M(i8008_MODEL_s* i8008, uint8_t* RAM);
+
+void ACI(i8008_MODEL_s* i8008, uint8_t imm);
+
+
+
+
 void SUB_Rs(i8008_MODEL_s* i8008, uint8_t src);
 
 void SUB_M(i8008_MODEL_s* i8008, uint8_t* RAM);
 
 void SUI(i8008_MODEL_s* i8008, uint8_t imm);
+
+
+
+void SBB_Rs(i8008_MODEL_s* i8008, uint8_t src);
+
+void SBB_M(i8008_MODEL_s* i8008, uint8_t* RAM);
+
+void SCI(i8008_MODEL_s* i8008, uint8_t imm);
+
+
 
 void ANA_Rs(i8008_MODEL_s* i8008, uint8_t src);
 
@@ -25,16 +47,36 @@ void ANA_M(i8008_MODEL_s* i8008, uint8_t* RAM);
 
 void ANI(i8008_MODEL_s* i8008, uint8_t imm);
 
+
+
+
 void XRA_Rs(i8008_MODEL_s* i8008, uint8_t src);
 
 void XRA_M(i8008_MODEL_s* i8008, uint8_t* RAM);
 
 void XRI(i8008_MODEL_s* i8008, uint8_t imm);
 
+
 void ORA_Rs(i8008_MODEL_s* i8008, uint8_t src);
 
 void ORA_M(i8008_MODEL_s* i8008, uint8_t* RAM);
 
 void ORI(i8008_MODEL_s* i8008, uint8_t imm);
+
+
+void CMP_Rs(i8008_MODEL_s* i8008, uint8_t src);
+
+void CMP_M(i8008_MODEL_s* i8008, uint8_t* RAM);
+
+void CPI(i8008_MODEL_s* i8008, uint8_t imm);
+
+
+void RLC(i8008_MODEL_s* i8008);
+
+void RRC(i8008_MODEL_s* i8008);
+
+void RAL(i8008_MODEL_s* i8008);
+
+void RAR(i8008_MODEL_s* i8008);
 
 #endif // ACC_GROUP_INSTR_H_INCLUDED

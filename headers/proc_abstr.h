@@ -3,6 +3,8 @@
 
 #define ADDR_AREA_SIZE 16384 // 2^14 bytes of memory!!!
 
+#define STACK_TOP 6
+
 struct named_regs_s
 {
     uint8_t A; // Accumulator
@@ -26,7 +28,7 @@ typedef struct Addr_stack_s
 {
     uint16_t PC; // Program counter
     uint16_t stack[7]; // stack for return-addresses
-    uint8_t SP; // 3-bit stack-pointer
+    int8_t SP; // 3-bit stack-pointer
 } Addr_stack_s;
 
 typedef struct Flags_s
